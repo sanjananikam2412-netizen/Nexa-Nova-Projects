@@ -1,0 +1,1320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trainer Management | CRUD Operations</title>
+  
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  
+  <!-- Custom Styles -->
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --primary-dark: #4338ca;
+      --primary-light: #c7d2fe;
+      --primary-50: #eef2ff;
+      --success: #10b981;
+      --error: #ef4444;
+      --warning: #f59e0b;
+      --info: #3b82f6;
+      --gray-50: #f8fafc;
+      --gray-100: #f1f5f9;
+      --gray-200: #e2e8f0;
+      --gray-300: #cbd5e1;
+      --gray-400: #94a3b8;
+      --gray-500: #64748b;
+      --gray-600: #475569;
+      --gray-700: #334155;
+      --gray-800: #1e293b;
+      --gray-900: #0f172a;
+    }
+    
+    body {
+      background-color: var(--gray-50);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      padding: 20px;
+    }
+    
+    .container {
+      max-width: 1000px;
+      margin: auto;
+    }
+    
+    .card {
+      border-radius: 10px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      border: none;
+      margin-bottom: 20px;
+    }
+    
+    .card-header {
+      background-color: var(--primary);
+      color: white;
+      border-radius: 10px 10px 0 0 !important;
+      padding: 15px 20px;
+    }
+    
+    .page-header {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: white;
+      padding: 15px 0;
+      margin-bottom: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    
+    .brand-container {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    
+    .brand-logo {
+      width: 40px;
+      height: 40px;
+      background-color: white;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary);
+      font-size: 18px;
+      font-weight: bold;
+    }
+    
+    .header-title {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.2;
+    }
+    
+    .header-subtitle {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+    
+    .section-title {
+      color: var(--primary);
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--primary-50);
+    }
+    
+    .section-title i {
+      margin-right: 10px;
+    }
+    
+    .form-label.required::after {
+      content: ' *';
+      color: var(--error);
+    }
+    
+    .is-invalid {
+      border-color: var(--error) !important;
+    }
+    
+    .validation-message {
+      font-size: 14px;
+      margin-top: 5px;
+      display: none;
+    }
+    
+    .validation-message.invalid {
+      color: var(--error);
+      display: block;
+    }
+    
+    .success-msg {
+      color: var(--success);
+      font-weight: 600;
+      padding: 10px 15px;
+      background-color: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.2);
+      border-radius: 8px;
+      margin-bottom: 15px;
+    }
+    
+    .error-msg {
+      color: var(--error);
+      font-weight: 600;
+      padding: 10px 15px;
+      background-color: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      border-radius: 8px;
+      margin-bottom: 15px;
+    }
+    
+    .btn-primary {
+      background-color: var(--primary);
+      border-color: var(--primary);
+    }
+    
+    .btn-primary:hover {
+      background-color: var(--primary-dark);
+      border-color: var(--primary-dark);
+    }
+    
+    .btn-secondary {
+      background-color: white;
+      color: var(--primary);
+      border-color: var(--primary);
+    }
+    
+    .btn-secondary:hover {
+      background-color: var(--primary-50);
+    }
+    
+    .btn-warning {
+      background-color: var(--warning);
+      border-color: var(--warning);
+    }
+    
+    .btn-danger {
+      background-color: var(--error);
+      border-color: var(--error);
+    }
+    
+    .contact-input-group {
+      display: flex;
+      gap: 10px;
+    }
+    
+    .country-input-wrapper {
+      position: relative;
+      width: 120px;
+    }
+    
+    .country-flag {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 20px;
+      height: 15px;
+      object-fit: cover;
+      border: 1px solid var(--gray-300);
+      border-radius: 3px;
+      pointer-events: none;
+    }
+    
+    .country-input {
+      padding-left: 40px !important;
+    }
+    
+    .phone-input {
+      flex: 1;
+    }
+    
+    .suggestions-list {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      z-index: 1000;
+      width: 100%;
+      max-height: 200px;
+      overflow-y: auto;
+      margin-top: 5px;
+      background-color: white;
+      border: 1px solid var(--gray-300);
+      border-radius: 8px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      display: none;
+    }
+    
+    .suggestions-list.visible {
+      display: block;
+    }
+    
+    .suggestion-item {
+      padding: 8px 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: background-color 0.15s ease;
+      font-size: 14px;
+    }
+    
+    .suggestion-item:hover {
+      background-color: var(--gray-100);
+    }
+    
+    .suggestion-flag {
+      width: 20px;
+      height: 15px;
+      object-fit: cover;
+      border: 1px solid var(--gray-300);
+      border-radius: 3px;
+    }
+    
+    .spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 1s ease-in-out infinite;
+      margin-right: 8px;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    .table th {
+      background-color: var(--primary-50);
+      color: var(--primary);
+    }
+    
+    .action-buttons {
+      display: flex;
+      gap: 5px;
+    }
+    
+    .action-btn {
+      padding: 5px 10px;
+      font-size: 12px;
+    }
+    
+    .hidden {
+      display: none;
+    }
+    
+    .card-footer {
+      background-color: var(--gray-100);
+      border-top: 1px solid var(--gray-200);
+      padding: 15px 20px;
+      border-radius: 0 0 10px 10px !important;
+    }
+    
+    .search-container {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+    
+    .search-input {
+      flex: 1;
+    }
+    
+    .no-data {
+      text-align: center;
+      padding: 20px;
+      color: var(--gray-500);
+    }
+  </style>
+</head>
+<body>
+  <!-- Header Section -->
+  <header class="page-header">
+    <div class="container">
+      <div class="d-flex justify-content-between align-items-center">
+        <div class="brand-container">
+          <div class="brand-logo">
+            <i class="fas fa-chalkboard-teacher"></i>
+          </div>
+          <div class="header-title">
+            <span>Trainer Management</span>
+            <span class="header-subtitle">Complete CRUD Operations</span>
+          </div>
+        </div>
+        <div class="header-actions">
+          <a href="/dashboard" class="btn btn-secondary btn-sm">
+            <i class="fas fa-home"></i> Dashboard
+          </a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <!-- Trainer Form Card -->
+    <div class="card">
+      <div class="card-header">
+        <h4 class="mb-0" id="formTitle"><i class="fas fa-user-plus"></i> Add Trainer</h4>
+      </div>
+      <div class="card-body p-4">
+        <div id="message"></div>
+
+        <form id="trainerForm" novalidate>
+          <input type="hidden" id="trainer_id" name="trainer_id" value="">
+          <input type="hidden" id="original_trainer_code" name="original_trainer_code" value="">
+          
+          <!-- Basic Information Section -->
+          <h5 class="section-title"><i class="fas fa-info-circle"></i> Basic Information</h5>
+          
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label for="trainer_code" class="form-label required">Trainer Code</label>
+              <input type="text" id="trainer_code" name="trainer_code" class="form-control" 
+                     placeholder="e.g., T001" required>
+              <div class="validation-message" id="error_trainer_code"></div>
+            </div>
+            <div class="col-md-6">
+              <label for="name" class="form-label required">Trainer Name</label>
+              <input type="text" id="name" name="name" class="form-control" 
+                     placeholder="Enter full name" required>
+              <div class="validation-message" id="error_name"></div>
+            </div>
+          </div>
+
+          <!-- Contact Information Section -->
+          <h5 class="section-title"><i class="fas fa-address-book"></i> Contact Information</h5>
+          
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label for="email" class="form-label">Email Address</label>
+              <input type="email" id="email" name="email" class="form-control"
+                     placeholder="trainer@example.com">
+              <div class="validation-message" id="error_email"></div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Phone Number</label>
+              <div class="contact-input-group">
+                <div class="country-input-wrapper">
+                  <img id="flag_icon" src="https://flagcdn.com/in.svg" alt="Flag" class="country-flag" />
+                  <input type="text" id="country_input" name="country_input" class="form-control country-input"
+                         placeholder="+91" maxlength="4" autocomplete="off" value="+91" />
+                  <div id="suggestions" class="suggestions-list"></div>
+                </div>
+                <input type="text" id="phone" name="phone" class="form-control phone-input"
+                       placeholder="Enter phone number" maxlength="15" inputmode="numeric" />
+              </div>
+              <div class="validation-message" id="error_phone"></div>
+            </div>
+          </div>
+
+          <!-- Training Information Section -->
+          <h5 class="section-title"><i class="fas fa-book"></i> Training Information</h5>
+          
+          <div class="row mb-4">
+            <div class="col-md-12">
+              <label for="subject" class="form-label">Subject</label>
+              <select name="subject" id="subject" class="form-select">
+                <option value="">-- Select Subject --</option>
+                <!-- Subjects will be populated dynamically -->
+              </select>
+              <div class="validation-message" id="error_subject"></div>
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-between">
+            <button type="button" id="resetBtn" class="btn btn-secondary">
+              <i class="fas fa-undo"></i> Reset Form
+            </button>
+            <div>
+              <button type="button" id="cancelBtn" class="btn btn-secondary hidden">
+                <i class="fas fa-times"></i> Cancel
+              </button>
+              <button type="submit" id="submitBtn" class="btn btn-primary">
+                <i class="fas fa-save"></i> Create Trainer
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Trainer List Card -->
+    <div class="card">
+      <div class="card-header">
+        <h4 class="mb-0"><i class="fas fa-list"></i> Trainer List</h4>
+      </div>
+      <div class="card-body p-4">
+        <div class="search-container">
+          <input type="text" id="searchInput" class="form-control search-input" placeholder="Search trainers...">
+          <button id="searchBtn" class="btn btn-primary">
+            <i class="fas fa-search"></i> Search
+          </button>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-bordered table-hover">
+            <thead>
+              <tr>
+                <th>Trainer Code</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Subject</th>
+                <th>Created At</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="trainerTableBody">
+              <!-- Trainer data will be populated dynamically -->
+            </tbody>
+          </table>
+        </div>
+        <div id="noDataMessage" class="no-data hidden">
+          <i class="fas fa-info-circle fa-2x mb-2"></i>
+          <p>No trainers found. Add a new trainer to get started.</p>
+        </div>
+      </div>
+      <div class="card-footer">
+        <div class="d-flex justify-content-between align-items-center">
+          <div class="text-muted" id="paginationInfo">Showing 0 trainers</div>
+          <div>
+            <button id="prevBtn" class="btn btn-sm btn-secondary" disabled>
+              <i class="fas fa-chevron-left"></i> Previous
+            </button>
+            <button id="nextBtn" class="btn btn-sm btn-secondary" disabled>
+              Next <i class="fas fa-chevron-right"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Confirmation Modal -->
+  <div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Confirm Deletion</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>Are you sure you want to delete trainer <strong id="deleteTrainerName"></strong>?</p>
+          <p class="text-danger">This action cannot be undone.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-danger" id="confirmDeleteBtn">
+            <i class="fas fa-trash"></i> Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Libphonenumber-js for phone number validation -->
+  <script src="https://unpkg.com/libphonenumber-js@1.10.18/bundle/libphonenumber-js.min.js"></script>
+  
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // ========== DOM Elements ==========
+      const form = document.getElementById('trainerForm');
+      const messageContainer = document.getElementById('message');
+      const submitBtn = document.getElementById('submitBtn');
+      const resetBtn = document.getElementById('resetBtn');
+      const cancelBtn = document.getElementById('cancelBtn');
+      const trainerCodeInput = document.getElementById('trainer_code');
+      const originalTrainerCodeInput = document.getElementById('original_trainer_code');
+      const countryInput = document.getElementById('country_input');
+      const flagIcon = document.getElementById('flag_icon');
+      const phoneInput = document.getElementById('phone');
+      const suggestionsBox = document.getElementById('suggestions');
+      const trainerTableBody = document.getElementById('trainerTableBody');
+      const searchInput = document.getElementById('searchInput');
+      const searchBtn = document.getElementById('searchBtn');
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+      const paginationInfo = document.getElementById('paginationInfo');
+      const noDataMessage = document.getElementById('noDataMessage');
+      const formTitle = document.getElementById('formTitle');
+      const trainerIdInput = document.getElementById('trainer_id');
+      const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+      const deleteTrainerName = document.getElementById('deleteTrainerName');
+      const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+
+      // ========== State Variables ==========
+      let trainers = [];
+      let currentPage = 1;
+      let pageSize = 10;
+      let totalPages = 1;
+      let searchQuery = '';
+      let isEditing = false;
+      let currentEditCode = null;
+      let subjects = [];
+      let countries = [];
+
+      // ========== Initialize Application ==========
+      initFormValidation();
+      loadCountries();
+      setupCountrySelector();
+      setupFormReset();
+      setupEventListeners();
+      loadSubjects();
+      loadTrainers();
+
+      // ========== Event Listeners Setup ==========
+      function setupEventListeners() {
+        // Search functionality
+        searchBtn.addEventListener('click', () => {
+          searchQuery = searchInput.value.trim();
+          currentPage = 1;
+          loadTrainers();
+        });
+
+        searchInput.addEventListener('keypress', (e) => {
+          if (e.key === 'Enter') {
+            searchQuery = searchInput.value.trim();
+            currentPage = 1;
+            loadTrainers();
+          }
+        });
+
+        // Pagination
+        prevBtn.addEventListener('click', () => {
+          if (currentPage > 1) {
+            currentPage--;
+            loadTrainers();
+          }
+        });
+
+        nextBtn.addEventListener('click', () => {
+          if (currentPage < totalPages) {
+            currentPage++;
+            loadTrainers();
+          }
+        });
+
+        // Cancel edit
+        cancelBtn.addEventListener('click', () => {
+          resetForm();
+        });
+      }
+
+      // ========== Country Data ==========
+      function loadCountries() {
+        countries = [
+          { code: 'in', name: 'India', dial_code: '+91' },
+          { code: 'us', name: 'United States', dial_code: '+1' },
+          { code: 'gb', name: 'United Kingdom', dial_code: '+44' },
+          { code: 'ca', name: 'Canada', dial_code: '+1' },
+          { code: 'au', name: 'Australia', dial_code: '+61' },
+          { code: 'de', name: 'Germany', dial_code: '+49' },
+          { code: 'fr', name: 'France', dial_code: '+33' },
+          { code: 'jp', name: 'Japan', dial_code: '+81' },
+          { code: 'cn', name: 'China', dial_code: '+86' },
+          { code: 'br', name: 'Brazil', dial_code: '+55' },
+          { code: 'ru', name: 'Russia', dial_code: '+7' },
+          { code: 'sg', name: 'Singapore', dial_code: '+65' },
+          { code: 'ae', name: 'United Arab Emirates', dial_code: '+971' },
+          { code: 'sa', name: 'Saudi Arabia', dial_code: '+966' },
+          { code: 'za', name: 'South Africa', dial_code: '+27' }
+        ];
+      }
+
+      // ========== API Functions ==========
+      async function loadSubjects() {
+        try {
+          const response = await fetch('/api/subjects/', {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+            }
+          });
+
+          if (response.ok) {
+            const result = await response.json();
+            subjects = result.subjects || [];
+          } else {
+            // Fallback to default subjects if API fails
+            subjects = [
+              { id: 1, name: 'Mathematics' },
+              { id: 2, name: 'Science' },
+              { id: 3, name: 'English' },
+              { id: 4, name: 'Computer Science' },
+              { id: 5, name: 'Physics' },
+              { id: 6, name: 'Chemistry' },
+              { id: 7, name: 'Biology' },
+              { id: 8, name: 'History' },
+              { id: 9, name: 'Geography' },
+              { id: 10, name: 'Economics' }
+            ];
+          }
+        } catch (error) {
+          console.error('Error loading subjects:', error);
+          // Fallback to default subjects
+          subjects = [
+            { id: 1, name: 'Mathematics' },
+            { id: 2, name: 'Science' },
+            { id: 3, name: 'English' },
+            { id: 4, name: 'Computer Science' },
+            { id: 5, name: 'Physics' },
+            { id: 6, name: 'Chemistry' },
+            { id: 7, name: 'Biology' },
+            { id: 8, name: 'History' },
+            { id: 9, name: 'Geography' },
+            { id: 10, name: 'Economics' }
+          ];
+        }
+
+        // Populate subject dropdown
+        const subjectSelect = document.getElementById('subject');
+        subjectSelect.innerHTML = '<option value="">-- Select Subject --</option>';
+        subjects.forEach(subject => {
+          const option = document.createElement('option');
+          option.value = subject.id;
+          option.textContent = subject.name;
+          subjectSelect.appendChild(option);
+        });
+      }
+
+      async function loadTrainers() {
+        try {
+          showLoadingState(true);
+          
+          // Build query parameters
+          const params = new URLSearchParams({
+            page: currentPage,
+            limit: pageSize
+          });
+          
+          if (searchQuery) {
+            params.append('search', searchQuery);
+          }
+
+          const response = await fetch(`/trainers/?${params}`, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+            }
+          });
+
+          if (response.ok) {
+            const result = await response.json();
+            trainers = result.trainers || [];
+            totalPages = result.totalPages || 1;
+            updateTrainerList();
+            updatePagination();
+          } else {
+            throw new Error('Failed to load trainers');
+          }
+        } catch (error) {
+          console.error('Error loading trainers:', error);
+          showMessage('Failed to load trainers. Please try again.', 'error');
+        } finally {
+          showLoadingState(false);
+        }
+      }
+
+      async function createTrainer(trainerData) {
+        try {
+          const response = await fetch('/trainer/create/', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(trainerData)
+          });
+
+          const result = await response.json();
+          
+          if (response.ok && result.status === 'success') {
+            return { success: true, data: result.trainer, message: result.message };
+          } else if (response.status === 400 && result.errors) {
+            return { success: false, errors: result.errors };
+          } else if (response.status === 409) {
+            return { success: false, message: result.message || 'This trainer code or email already exists.' };
+          } else {
+            return { success: false, message: result.message || 'Failed to create trainer.' };
+          }
+        } catch (error) {
+          console.error('Error creating trainer:', error);
+          return { success: false, message: 'Network error. Please try again.' };
+        }
+      }
+
+      async function updateTrainer(trainerCode, trainerData) {
+        try {
+          const response = await fetch(`/trainer/update/${trainerCode}/`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(trainerData)
+          });
+
+          const result = await response.json();
+          
+          if (response.ok && result.status === 'success') {
+            return { success: true, data: result.trainer, message: result.message };
+          } else if (response.status === 400 && result.errors) {
+            return { success: false, errors: result.errors };
+          } else if (response.status === 409) {
+            return { success: false, message: result.message || 'This trainer code or email already exists.' };
+          } else {
+            return { success: false, message: result.message || 'Failed to update trainer.' };
+          }
+        } catch (error) {
+          console.error('Error updating trainer:', error);
+          return { success: false, message: 'Network error. Please try again.' };
+        }
+      }
+
+      async function deleteTrainer(trainerCode) {
+        try {
+          const response = await fetch(`/trainer/delete/${trainerCode}/`, {
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json',
+            }
+          });
+
+          const result = await response.json();
+          
+          if (response.ok && result.status === 'success') {
+            return { success: true, message: result.message };
+          } else {
+            return { success: false, message: result.message || 'Failed to delete trainer.' };
+          }
+        } catch (error) {
+          console.error('Error deleting trainer:', error);
+          return { success: false, message: 'Network error. Please try again.' };
+        }
+      }
+
+      // ========== Form Validation Setup ==========
+      function initFormValidation() {
+        // Add input event listeners to clear validation errors when user types
+        ['trainer_code', 'name', 'email', 'phone'].forEach(fieldId => {
+          const field = document.getElementById(fieldId);
+          if (field) {
+            field.addEventListener('input', () => {
+              if (field.value.trim()) {
+                field.classList.remove('is-invalid');
+                const errorDiv = document.getElementById(`error_${fieldId}`);
+                if (errorDiv) {
+                  errorDiv.style.display = 'none';
+                  errorDiv.textContent = '';
+                }
+              }
+            });
+          }
+        });
+
+        // Phone number formatting
+        phoneInput.addEventListener('input', () => {
+          phoneInput.value = phoneInput.value.replace(/\D/g, '');
+        });
+
+        // Auto-format trainer code to uppercase
+        trainerCodeInput.addEventListener('input', () => {
+          trainerCodeInput.value = trainerCodeInput.value.toUpperCase();
+        });
+      }
+
+      // ========== Country Selector Setup ==========
+      function setupCountrySelector() {
+        const input = document.getElementById('country_input');
+        const suggestionsBox = document.getElementById('suggestions');
+        const flagIcon = document.getElementById('flag_icon');
+        const phoneInput = document.getElementById('phone');
+        const phoneError = document.getElementById('error_phone');
+
+        // Handle input in country code field
+        input.addEventListener('input', () => {
+          const query = input.value.trim().toLowerCase();
+          suggestionsBox.innerHTML = '';
+
+          // If empty input, hide flag
+          if (!query) {
+            flagIcon.style.display = 'none';
+            return;
+          }
+
+          // Check for exact match with dial code
+          const exactMatch = countries.find(c => c.dial_code === input.value.trim());
+          if (exactMatch) {
+            showCountryDetails(exactMatch);
+            suggestionsBox.innerHTML = '';
+            return;
+          }
+
+          // Find matching countries by name or dial code
+          const matches = countries.filter(c => 
+            c.name.toLowerCase().includes(query) || 
+            c.dial_code.includes(query)
+          );
+          
+          // Display up to 10 suggestions
+          matches.slice(0, 10).forEach(match => {
+            const div = document.createElement('div');
+            div.className = 'suggestion-item';
+            div.innerHTML = `
+              <img src="https://flagcdn.com/24x18/${match.code.toLowerCase()}.png" alt="flag" class="suggestion-flag" />
+              ${match.name} (${match.dial_code})
+            `;
+            div.addEventListener('click', () => {
+              input.value = match.dial_code;
+              showCountryDetails(match);
+              suggestionsBox.classList.remove('visible');
+            });
+            suggestionsBox.appendChild(div);
+          });
+
+          // Show/hide suggestions box based on matches
+          suggestionsBox.classList.toggle('visible', matches.length > 0);
+        });
+
+        // Close suggestions when clicking outside
+        document.addEventListener('click', (e) => {
+          if (!suggestionsBox.contains(e.target) && e.target !== input) {
+            suggestionsBox.classList.remove('visible');
+          }
+        });
+
+        // Display country details (flag, etc.)
+        function showCountryDetails(country) {
+          flagIcon.src = `https://flagcdn.com/24x18/${country.code.toLowerCase()}.png`;
+          flagIcon.style.display = 'inline-block';
+          phoneInput.placeholder = `Enter phone number`;
+          phoneError.style.display = 'none';
+        }
+
+        // Validate phone number when leaving the field
+        phoneInput.addEventListener('blur', () => {
+          const dialCode = input.value.trim();
+          const number = phoneInput.value.trim();
+          if (number) {
+            try {
+              const minLength = 5;
+              const maxLength = 15;
+              
+              if (number.length < minLength || number.length > maxLength) {
+                showError('phone', `Phone number must be between ${minLength} and ${maxLength} digits for selected country.`);
+              } else {
+                const parsed = libphonenumber.parsePhoneNumberFromString(dialCode + number);
+                if (!parsed || !parsed.isValid()) {
+                  showError('phone', 'Enter a valid phone number for selected country.');
+                } else {
+                  clearError('phone');
+                }
+              }
+            } catch (err) {
+              showError('phone', 'Invalid phone number format.');
+            }
+          }
+        });
+      }
+
+      // ========== Form Reset Setup ==========
+      function setupFormReset() {
+        resetBtn.addEventListener('click', () => {
+          if (confirm('Are you sure you want to reset the form? All entered data will be lost.')) {
+            resetForm();
+            showMessage('Form has been reset', 'success');
+          }
+        });
+      }
+
+      // ========== Form Submission Handler ==========
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        clearValidationStates();
+        hideMessage();
+
+        // Validate form before submission
+        if (!validateForm()) {
+          showMessage('Please fix the form errors before submitting', 'error');
+          return;
+        }
+
+        try {
+          // Disable submit button and show loading state
+          submitBtn.disabled = true;
+          submitBtn.innerHTML = isEditing 
+            ? '<span class="spinner"></span> Updating...' 
+            : '<span class="spinner"></span> Creating...';
+
+          // Prepare form data according to API structure
+          const formData = {
+            trainer_code: document.getElementById('trainer_code').value.trim(),
+            name: document.getElementById('name').value.trim(),
+            email: document.getElementById('email').value.trim(),
+            country_code: document.getElementById('country_input').value.trim(),
+            phone: document.getElementById('phone').value.trim(),
+            subject: document.getElementById('subject').value
+          };
+
+          let result;
+          if (isEditing) {
+            // Update existing trainer - use original code for URL, new code for data
+            result = await updateTrainer(currentEditCode, formData);
+          } else {
+            // Create new trainer
+            result = await createTrainer(formData);
+          }
+
+          // Handle response
+          if (result.success) {
+            // Success - show message and reset form
+            showMessage(result.message, 'success');
+            resetForm();
+            
+            // Update trainer list with the new trainer data
+            loadTrainers();
+          } else if (result.errors) {
+            // Validation errors from server
+            handleValidationErrors(result.errors);
+            showMessage('Please correct the highlighted errors', 'error');
+          } else {
+            // Other errors
+            showMessage(result.message, 'error');
+          }
+
+        } catch (error) {
+          // Network or other errors
+          console.error("❌ Request failed:", error);
+          showMessage('Failed to submit form. Please try again.', 'error');
+        } finally {
+          // Re-enable submit button
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = isEditing 
+            ? '<i class="fas fa-save"></i> Update Trainer' 
+            : '<i class="fas fa-save"></i> Create Trainer';
+        }
+      });
+
+      // ========== Trainer List Management ==========
+      function updateTrainerList() {
+        trainerTableBody.innerHTML = '';
+        
+        if (trainers.length === 0) {
+          noDataMessage.classList.remove('hidden');
+          return;
+        }
+        
+        noDataMessage.classList.add('hidden');
+        
+        trainers.forEach(trainer => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${trainer.trainer_code}</td>
+            <td>${trainer.name}</td>
+            <td>${trainer.email || '-'}</td>
+            <td>${trainer.phone ? `${trainer.country_code || '+91'} ${trainer.phone}` : '-'}</td>
+            <td>${getSubjectName(trainer.subject)}</td>
+            <td>${formatDate(trainer.created_at)}</td>
+            <td>
+              <div class="action-buttons">
+                <button class="btn btn-warning btn-sm action-btn edit-btn" data-code="${trainer.trainer_code}">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn btn-danger btn-sm action-btn delete-btn" data-code="${trainer.trainer_code}" data-name="${trainer.name}">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </td>
+          `;
+          trainerTableBody.appendChild(row);
+        });
+
+        // Add event listeners to action buttons
+        document.querySelectorAll('.edit-btn').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            const code = e.currentTarget.getAttribute('data-code');
+            editTrainer(code);
+          });
+        });
+
+        document.querySelectorAll('.delete-btn').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            const code = e.currentTarget.getAttribute('data-code');
+            const name = e.currentTarget.getAttribute('data-name');
+            confirmDelete(code, name);
+          });
+        });
+      }
+
+      function updatePagination() {
+        // Update pagination info
+        const startIndex = (currentPage - 1) * pageSize + 1;
+        const endIndex = Math.min(currentPage * pageSize, trainers.length);
+        paginationInfo.textContent = `Showing ${startIndex}-${endIndex} of ${trainers.length} trainers`;
+        
+        // Update button states
+        prevBtn.disabled = currentPage <= 1;
+        nextBtn.disabled = currentPage >= totalPages;
+      }
+
+      // ========== CRUD Operations ==========
+      function editTrainer(code) {
+        const trainer = trainers.find(t => t.trainer_code == code);
+        if (!trainer) return;
+
+        // Set form to edit mode
+        isEditing = true;
+        currentEditCode = code;
+        
+        // Update form title and button
+        formTitle.innerHTML = '<i class="fas fa-user-edit"></i> Edit Trainer';
+        submitBtn.innerHTML = '<i class="fas fa-save"></i> Update Trainer';
+        cancelBtn.classList.remove('hidden');
+        
+        // Populate form with trainer data
+        document.getElementById('trainer_id').value = trainer.id || '';
+        document.getElementById('trainer_code').value = trainer.trainer_code;
+        document.getElementById('original_trainer_code').value = trainer.trainer_code;
+        document.getElementById('name').value = trainer.name;
+        document.getElementById('email').value = trainer.email || '';
+        
+        // Set phone and country code separately
+        document.getElementById('country_input').value = trainer.country_code || '+91';
+        document.getElementById('phone').value = trainer.phone || '';
+        
+        // Update flag based on country code
+        const country = countries.find(c => c.dial_code === (trainer.country_code || '+91'));
+        if (country) {
+          document.getElementById('flag_icon').src = `https://flagcdn.com/24x18/${country.code.toLowerCase()}.png`;
+        }
+        
+        document.getElementById('subject').value = trainer.subject || '';
+        
+        // Scroll to form
+        form.scrollIntoView({ behavior: 'smooth' });
+      }
+
+      function confirmDelete(code, name) {
+        deleteTrainerName.textContent = name;
+        confirmDeleteBtn.setAttribute('data-code', code);
+        deleteModal.show();
+      }
+
+      confirmDeleteBtn.addEventListener('click', async () => {
+        const code = confirmDeleteBtn.getAttribute('data-code');
+        deleteModal.hide();
+        
+        try {
+          showLoadingState(true);
+          const result = await deleteTrainer(code);
+          
+          if (result.success) {
+            showMessage(result.message, 'success');
+            loadTrainers();
+          } else {
+            showMessage(result.message, 'error');
+          }
+        } catch (error) {
+          console.error('Error deleting trainer:', error);
+          showMessage('Failed to delete trainer. Please try again.', 'error');
+        } finally {
+          showLoadingState(false);
+        }
+      });
+
+      function resetForm() {
+        form.reset();
+        clearValidationStates();
+        hideMessage();
+        
+        // Reset form mode
+        isEditing = false;
+        currentEditCode = null;
+        formTitle.innerHTML = '<i class="fas fa-user-plus"></i> Add Trainer';
+        submitBtn.innerHTML = '<i class="fas fa-save"></i> Create Trainer';
+        cancelBtn.classList.add('hidden');
+        
+        // Reset country flag to default
+        document.getElementById('flag_icon').src = 'https://flagcdn.com/in.svg';
+        document.getElementById('country_input').value = '+91';
+        
+        // Clear hidden fields
+        document.getElementById('trainer_id').value = '';
+        document.getElementById('original_trainer_code').value = '';
+      }
+
+      // ========== Utility Functions ==========
+      function getSubjectName(subjectId) {
+        const subject = subjects.find(s => s.id == subjectId);
+        return subject ? subject.name : '-';
+      }
+
+      function formatDate(dateString) {
+        if (!dateString) return '-';
+        try {
+          const date = new Date(dateString);
+          return date.toLocaleString('en-IN', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit'
+          });
+        } catch (e) {
+          return dateString;
+        }
+      }
+
+      function showLoadingState(loading) {
+        if (loading) {
+          submitBtn.disabled = true;
+          submitBtn.innerHTML = '<span class="spinner"></span> Loading...';
+        } else {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = isEditing 
+            ? '<i class="fas fa-save"></i> Update Trainer' 
+            : '<i class="fas fa-save"></i> Create Trainer';
+        }
+      }
+
+      // ========== Message Handling Functions ==========
+      function showMessage(content, type = 'info') {
+        const container = document.getElementById('message');
+        container.innerHTML = '';
+        
+        const messageDiv = document.createElement('div');
+        messageDiv.className = type === 'success' ? 'success-msg' : 'error-msg';
+        messageDiv.innerHTML = content;
+        
+        container.appendChild(messageDiv);
+        
+        // Auto-hide after 5 seconds
+        setTimeout(() => {
+          hideMessage();
+        }, 5000);
+      }
+
+      function hideMessage() {
+        const container = document.getElementById('message');
+        container.innerHTML = '';
+      }
+
+      // ========== Form Validation Functions ==========
+      function validateForm() {
+        let valid = true;
+        // Helper function to get trimmed values
+        const get = id => document.getElementById(id)?.value.trim() || '';
+
+        // Validate trainer code
+        const trainerCode = get('trainer_code');
+        if (!trainerCode) {
+          showError('trainer_code', 'Trainer code is required.');
+          valid = false;
+        } else if (!/^[A-Za-z0-9]{2,10}$/.test(trainerCode)) {
+          showError('trainer_code', 'Trainer code must be 2-10 alphanumeric characters.');
+          valid = false;
+        }
+
+        // Validate trainer name
+        const name = get('name');
+        if (!name) {
+          showError('name', 'Trainer name is required.');
+          valid = false;
+        } else if (name.length < 3) {
+          showError('name', 'Trainer name must be at least 3 characters.');
+          valid = false;
+        }
+
+        // Validate email (if provided)
+        const email = get('email');
+        if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+          showError('email', 'Enter a valid email address.');
+          valid = false;
+        }
+
+        // Validate phone number (if provided)
+        const dialCode = get('country_input');
+        const phone = get('phone');
+        if (phone) {
+          try {
+            const minLength = 5;
+            const maxLength = 15;
+            
+            if (phone.length < minLength || phone.length > maxLength) {
+              showError('phone', `Phone number must be between ${minLength} and ${maxLength} digits for selected country.`);
+              valid = false;
+            } else {
+              const parsed = libphonenumber.parsePhoneNumberFromString(dialCode + phone);
+              if (!parsed || !parsed.isValid()) {
+                showError('phone', 'Enter a valid phone number for selected country.');
+                valid = false;
+              }
+            }
+          } catch (err) {
+            showError('phone', 'Invalid phone number format.');
+            valid = false;
+          }
+        }
+
+        return valid;
+      }
+
+      function showError(fieldId, message) {
+        const input = document.getElementById(fieldId);
+        const error = document.getElementById(`error_${fieldId}`);
+        if (input) input.classList.add('is-invalid');
+        if (error) {
+          error.textContent = message;
+          error.classList.add('invalid');
+          error.style.display = 'block';
+        }
+        
+        // Scroll to the field with error
+        input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        
+        // Auto-clear error after 5 seconds
+        setTimeout(() => {
+          if (input) input.classList.remove('is-invalid');
+          if (error) {
+            error.textContent = '';
+            error.classList.remove('invalid');
+            error.style.display = 'none';
+          }
+        }, 5000);
+      }
+
+      function clearError(fieldId) {
+        const input = document.getElementById(fieldId);
+        const error = document.getElementById(`error_${fieldId}`);
+        if (input) input.classList.remove('is-invalid');
+        if (error) {
+          error.textContent = '';
+          error.classList.remove('invalid');
+          error.style.display = 'none';
+        }
+      }
+
+      function clearValidationStates() {
+        // Clear all validation messages and states
+        document.querySelectorAll('.validation-message').forEach(el => {
+          el.style.display = 'none';
+          el.classList.remove('invalid', 'valid');
+        });
+        document.querySelectorAll('input, select').forEach(el => {
+          el.classList.remove('is-invalid', 'is-valid');
+        });
+      }
+
+      function handleValidationErrors(errors) {
+        // Build error message from server response
+        let errorMessage = 'Validation errors occurred:<br><ul>';
+        
+        // Add each error to the message
+        for (const [field, errorList] of Object.entries(errors)) {
+          const input = document.getElementById(field);
+          const errorDiv = document.getElementById(`error_${field}`);
+          const errorText = errorList.join(', ');
+
+          errorMessage += `<li><strong>${field.replace('_', ' ')}:</strong> ${errorText}</li>`;
+
+          // Highlight fields with errors
+          if (input) input.classList.add('is-invalid');
+          if (errorDiv) {
+            errorDiv.textContent = errorText;
+            errorDiv.classList.add('invalid');
+            errorDiv.style.display = 'block';
+          }
+        }
+        
+        errorMessage += '</ul>';
+        showMessage(errorMessage, 'error');
+      }
+    });
+  </script>
+</body>
+</html>

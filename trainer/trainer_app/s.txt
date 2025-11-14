@@ -1,0 +1,83 @@
+-- ==========================================
+-- DATABASE: institute_db
+-- ==========================================
+CREATE DATABASE institute_db;
+USE institute_db;
+
+-- ==========================================
+-- TABLE: subject
+-- ==========================================
+CREATE TABLE subject (
+    subject_id INT AUTO_INCREMENT PRIMARY KEY,
+    
+    -- Subject Name must be unique and non-empty
+    subject_name VARCHAR(100) NOT NULL UNIQUE,
+    
+    -- Optional description of the subject
+    description TEXT,
+    
+    -- Audit fields
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+    -- Validation: Ensure name length is reasonable (1–100)
+    CHECK (CHAR_LENGTH(subject_name) BETWEEN 1 AND 100)
+);
+
+-- ==========================================
+-- TABLE: trainer
+-- ==========================================
+CREATE TABLE    trainer (
+    emp_id VARCHAR(20) PRIMARY KEY,
+    
+    -- Trainer name required and length-constrained
+    name VARCHAR(100) NOT NULL,
+    
+    -- Email must be unique and valid format check
+    email VARCHAR(100) UNIQUE,
+    
+    -- Phone number validation: only digits (10–15 digits)
+    phone VARCHAR(15),
+    
+    -- Foreign key linking to subject
+    subject_id INT,
+    
+    -- Timestamps
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+    -- Constraints
+    CHECK (CHAR_LENGTH(emp_id) >= 3),
+    CHECK (CHAR_LENGTH(name) BETWEEN 2 AND 100),
+    CHECK (phone REGEXP '^[0-9]{10,15}$' OR phone IS NULL),
+    CHECK (email REGEXP '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$' OR email IS NULL),
+    
+    -- Relationship
+    CONSTRAINT fk_trainer_subject FOREIGN KEY (subject_id)
+        REFERENCES subject(subject_id)
+        ON DELETE SET NULL
+        ON UPDATE CASCADE
+);
+
+-- ==========================================
+-- OPTIONAL INDEXES (for performance)
+-- ==========================================
+CREATE INDEX idx_trainer_subject_id ON trainer(subject_id);
+CREATE INDEX idx_subject_name ON subject(subject_name);
+
+-- ==========================================
+-- SAMPLE DATA
+-- ==========================================
+INSERT INTO subject (subject_name, description)
+VALUES
+('Mathematics', 'Covers algebra, geometry, and calculus'),
+('Physics', 'Covers motion, energy, and thermodynamics'),
+('Chemistry', 'Covers organic and inorganic chemistry')
+ON DUPLICATE KEY UPDATE subject_name = VALUES(subject_name);
+
+INSERT INTO trainer (emp_id, name, email, phone, subject_id)
+VALUES
+('EMP001', 'Rajesh Kumar', 'rajesh.kumar@example.com', '9876543210', 1),
+('EMP002', 'Sneha Patel', 'sneha.patel@example.com', '9123456780', 2),
+('EMP003', 'Amit Sharma', 'amit.sharma@example.com', '9988776655', 1)
+ON DUPLICATE KEY UPDATE name = VALUES(name);
